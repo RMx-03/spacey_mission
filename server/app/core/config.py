@@ -33,6 +33,10 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+    # Parse comma-separated origins if provided
+    if isinstance(settings.cors_origins, str):
+        settings.cors_origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+    return settings
 
 

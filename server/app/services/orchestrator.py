@@ -1,58 +1,28 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-from langgraph.graph import StateGraph, END
-from typing_extensions import TypedDict
+from sqlalchemy.ext.asyncio import AsyncSession
 
-
-class OrchestratorState(TypedDict, total=False):
-    user_message: str
-    route: str
-    response: str
+from app.services.llm import chat as llm_chat
+from app.services.retrieval import search_chunks
 
 
-def _classify_intent(state: OrchestratorState) -> OrchestratorState:
-    message = state.get("user_message", "")
-    # TODO: replace with model-based classifier
-    route = "quiz" if any(k in message.lower() for k in ["quiz", "test"]) else "explain"
-    state["route"] = route
-    return state
+async def run_orchestrator(db: AsyncSession, user_message: str, history: List[Dict[str, str]] | None = None) -> Dict[str, Any]:
+    history = history or []
+    # Retrieve supporting context
+    contexts = await search_chunks(db, query=user_message, top_k=5)
+    context_text = "\n\n".join([c[0] for c in contexts])
 
-
-def _node_explain(state: OrchestratorState) -> OrchestratorState:
-    state["response"] = f"Explaining: {state.get('user_message','')}"
-    return state
-
-
-def _node_quiz(state: OrchestratorState) -> OrchestratorState:
-    state["response"] = "Let's try a quick quiz question related to your topic."
-    return state
-
-
-def build_graph():
-    graph = StateGraph(OrchestratorState)
-    graph.add_node("classify", _classify_intent)
-    graph.add_node("explain", _node_explain)
-    graph.add_node("quiz", _node_quiz)
-
-    graph.set_entry_point("classify")
-    graph.add_conditional_edges(
-        "classify",
-        lambda s: s.get("route", "explain"),
-        {
-            "explain": "explain",
-            "quiz": "quiz",
-        },
+    system_prompt = (
+        "You are Spacey, an expert AI tutor. Use the provided context if relevant.\n"
+        "Cite facts concisely and guide with clarity.\n"
+        "If you are unsure, say so and ask a follow-up.\n"
+        f"Context:\n{context_text}\n"
     )
-    graph.add_edge("explain", END)
-    graph.add_edge("quiz", END)
-    return graph.compile()
 
-
-compiled_graph = build_graph()
-
-
-def run_orchestrator(user_message: str) -> Dict[str, Any]:
-    result = compiled_graph.invoke({"user_message": user_message})
-    return {"route": result.get("route"), "response": result.get("response")}
+    messages = [{"role": "system", "content": system_prompt}] + history + [
+        {"role": "user", "content": user_message}
+    ]
+    answer = llm_chat(messages)
+    return {"route": "tutor", "response": answer}
 
 

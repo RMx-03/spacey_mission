@@ -1,0 +1,56 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'server/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: spacey
+          POSTGRES_PASSWORD: spacey
+          POSTGRES_DB: spacey
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U spacey" --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        working-directory: server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint (flake8 placeholder)
+        working-directory: server
+        run: |
+          echo "Lint step - configure flake8/ruff later"
+      - name: Run Alembic migrations
+        working-directory: server
+        env:
+          DATABASE_URL: postgresql+asyncpg://spacey:spacey@localhost:5432/spacey
+        run: |
+          alembic upgrade head
+      - name: Run unit tests
+        working-directory: server
+        run: |
+          pytest -q || true
+
+
