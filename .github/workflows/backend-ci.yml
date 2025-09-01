@@ -33,11 +33,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
       - name: Install deps
         working-directory: server
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt -c constraints-otel.txt
       - name: Lint (flake8 placeholder)
         working-directory: server
         run: |
@@ -51,6 +52,6 @@ jobs:
       - name: Run unit tests
         working-directory: server
         run: |
-          pytest -q || true
+          pytest -q
 
 

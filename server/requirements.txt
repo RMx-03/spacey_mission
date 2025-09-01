@@ -20,7 +20,11 @@ typing-extensions==4.12.2
 pytest==8.3.2
 pytest-asyncio==0.23.8
 sentry-sdk==2.12.0
-opentelemetry-distro==0.46b0
-opentelemetry-instrumentation-fastapi==0.46b0
+## OpenTelemetry unified versions (resolved conflicts)
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
 opentelemetry-exporter-otlp==1.27.0
+opentelemetry-instrumentation==0.48b0
+opentelemetry-instrumentation-fastapi==0.48b0
+
 
