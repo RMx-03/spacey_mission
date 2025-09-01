@@ -1,6 +1,13 @@
 from __future__ import with_statement
 import asyncio
 from logging.config import fileConfig
+import sys
+from pathlib import Path
+
+# Ensure the server base directory (containing the 'app' package) is on sys.path
+BASE_DIR = Path(__file__).resolve().parents[1]
+if str(BASE_DIR) not in sys.path:  # idempotent
+    sys.path.insert(0, str(BASE_DIR))
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
