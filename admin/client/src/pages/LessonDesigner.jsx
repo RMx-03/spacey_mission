@@ -11,6 +11,7 @@ import {
 import LessonBuilder from '../features/builder/components/LessonBuilder';
 import NodePalette from '../features/builder/components/NodePalette';
 import InspectorPanel from '../features/builder/components/InspectorPanel';
+import { nodeCreator } from '../features/builder/nodeRegistry';
 import {
   addNodeToLesson,
   updateNodeInLesson,
@@ -56,33 +57,13 @@ const LessonDesignerContent = () => {
       y: flowHeight / 2,
     });
 
-    const newNode = {
-      type: nodeType,
-      position,
-      data: {},
-    };
+    // Use the central node creator to get the new node's data structure
+    const creator = nodeCreator[nodeType];
+    if (!creator) return;
 
-    if (nodeType === 'quiz') {
-      newNode.data = { label: 'New Quiz', question: '', options: ['Option 1', 'Option 2'], correctAnswer: 'Option 1' };
-    } else if (nodeType === 'narration') {
-      newNode.data = { label: 'New Narration', text: '' };
-    } else if (nodeType === 'choice') {
-      newNode.data = { label: 'New Choice', prompt: 'Make a choice:', options: ['Path A', 'Path B'], uiStyle: 'buttons' };
-    } else if (nodeType === 'aiTrigger') {
-      newNode.data = { label: 'AI Analysis', ai_action: 'analyze_behavior', fallback_text: "Spacey says: 'You've got this, let's keep going!'" };
-    } else if (nodeType === 'gameInteraction') {
-      newNode.data = {
-        label: 'New Game',
-        game_id: '',
-        prompt: '',
-        configuration: {},
-        options: ['Success', 'Failure'],
-      };
-    }
+    const newNode = { ...creator(), position };
 
     try {
-      // Let the onSnapshot listener handle adding the node to the state.
-      // This creates a single source of truth for state updates.
       await addNodeToLesson(lessonId, newNode);
     } catch (error) {
       console.error('Error adding node:', error);

@@ -1,16 +1,21 @@
 import React from 'react';
 import { Clock, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import useSound from 'use-sound';
+import ctaButtonSound from '../../../assets/sounds/Button03.wav';
 
 const LessonCard = ({ lesson }) => {
   const { id, title, shortDescription, estimatedDuration, iconUrl } = lesson;
+  const [playCta] = useSound(ctaButtonSound, { volume: 0.25, playbackRate: 1.1 });
 
   return (
     <Link
       to={`/dashboard/lessons/${id}`}
-      className="bg-deep-black/80 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:border-cyan-green/70 hover:shadow-[0_0_25px_rgba(46,243,209,0.3)] hover:-translate-y-2"
+      onMouseEnter={playCta}
+      onClick={playCta}
+      className="bg-deep-black/80 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:border-cyan-green/70 hover:shadow-[0_0_25px_rgba(46,243,209,0.3)] hover:-translate-y-2 w-full max-w-sm"
     >
-      <div className="h-48 w-full overflow-hidden">
+      <div className="aspect-video w-full overflow-hidden">
         {iconUrl ? (
           <img
             src={iconUrl}

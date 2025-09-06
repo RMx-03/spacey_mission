@@ -30,8 +30,8 @@ This section outlines the key features of the application, with a checklist to t
 
 ### Admin & Content Management
 - [x] **Admin Dashboard**: A separate, secure application for content management.
-- [ ] **Lesson Design System**: A visual interface (e.g., node editor, knowledge graph) for creating and structuring lessons.
-- [ ] **Direct Database Interaction**: Secure endpoints for admins to create, read, update, and delete lesson content.
+- [x] **Lesson Design System**: A visual interface (e.g., node editor, knowledge graph) for creating and structuring lessons.
+- [x] **Direct Database Interaction**: Secure endpoints for admins to create, read, update, and delete lesson content.
 
 ### Data & Technology
 - [ ] **Firebase Firestore Integration**: To store user data, learning paths, and achievements.
@@ -82,6 +82,7 @@ src/
 ├── pages/                    // Top-level page components that assemble features
 │   ├── HomePage.jsx
 │   ├── DashboardPage.jsx
+│   ├── MyLessonPage.jsx
 │   └── LessonPage.jsx
 ├── services/                 // Global API services
 │   └── api.js

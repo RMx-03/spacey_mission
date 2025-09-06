@@ -1,8 +1,14 @@
-import React from 'react'
+import React from 'react';
 import { BrainCircuit, Gamepad2, Rocket, Globe, Twitter, Instagram } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
+import useSound from 'use-sound';
+import ctaButtonSound from '../assets/sounds/Button03.wav';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [playCta] = useSound(ctaButtonSound, { volume: 0.25 });
+
   return (
     <div className="bg-deep-black text-white font-sans">
       <Navbar />
@@ -28,8 +34,13 @@ const HomePage = () => {
               universe of STEM concepts guided by our AI tutor.
             </p>
             <a
-              href="dashboard"
+              href="/dashboard"
               className="inline-flex items-center justify-center gap-3 bg-cyan-green text-deep-black font-bold px-8 py-4 rounded-full text-lg hover:scale-105 transition animate-pulse-glow"
+              onClick={(e) => {
+                e.preventDefault();
+                playCta();
+                navigate('/dashboard');
+              }}
             >
               <Rocket size={22} />
               Launch Your Journey

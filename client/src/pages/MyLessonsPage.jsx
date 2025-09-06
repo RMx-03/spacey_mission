@@ -26,12 +26,9 @@ const MyLessonsPage = () => {
   }, []);
 
   return (
-    <div className="bg-black/30 backdrop-blur-sm rounded-xl border border-white/10 p-8">
-      <h1 className="text-4xl font-bold text-cyan-green mb-4">My Lessons</h1>
-      <p className="text-lg text-white/80 mb-8">
-        Here you'll find all your available lessons. Choose one to begin your next adventure!
-      </p>
-
+    // The container is now simpler as padding is handled by DashboardPage.jsx
+    <div>
+      <h1 className="text-4xl font-bold text-cyan-green mb-8">My Lessons</h1>
       {loading && (
         <div className="flex justify-center items-center h-64">
           <Loader className="animate-spin text-cyan-green" size={48} />
@@ -46,7 +43,7 @@ const MyLessonsPage = () => {
       )}
 
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center">
           {lessons.length > 0 ? (
             lessons.map(lesson => <LessonCard key={lesson.id} lesson={lesson} />)
           ) : (

@@ -1,20 +1,9 @@
 import React from 'react';
-import NarrationInspector from '../inspectors/NarrationInspector';
-import QuizInspector from '../inspectors/QuizInspector' ;
-import ChoiceInspector from '../inspectors/ChoiceInspector';
-import AITriggerInspector from '../inspectors/AITriggerInspector';
-import GameInteractionInspector from '../inspectors/GameInteractionInspector';
-
-const InspectorMap = {
-  narration: NarrationInspector,
-  quiz: QuizInspector,
-  choice: ChoiceInspector,
-  aiTrigger: AITriggerInspector,
-  gameInteraction: GameInteractionInspector,
-};
+import { inspectorTypes } from '../nodeRegistry';
 
 const InspectorPanel = ({ node, onNodeUpdate, onNodeDelete }) => {
-  const InspectorComponent = InspectorMap[node.type];
+  if (!node) return null;
+  const InspectorComponent = inspectorTypes[node.type];
 
   switch (node.type) {
     case 'input':
